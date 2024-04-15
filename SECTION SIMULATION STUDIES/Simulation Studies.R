@@ -319,6 +319,7 @@ loading_VAR_ASE_LAV <- loading_VAR_ASE_SEM <- loading_VAR_ASE_MX <- matrix(0, re
 TIME_UB <- TIME_LAV <- TIME_SEM <- TIME_MX <- 0
 LOSS_UB <- LOSS_LAV <- LOSS_SEM <- LOSS_MX <- rep(0, repsMax)
 LOSS_MIS_1 <- LOSS_MIS_3 <- LOSS_MIS_5 <- rep(0, repsMax)
+RLOSS_MIS_1 <- RLOSS_MIS_3 <- RLOSS_MIS_5 <- rep(0, repsMax)
 
 ###########################
 ### Computing procedure ###
@@ -362,13 +363,13 @@ while(reps <= repsMax){
 		TIME_UB <- TIME_UB + (Sys.time() - TIME_TEMP)
 		A_hat <- RES_theta_hat$A
 		B_hat <- RES_theta_hat$B
-		theta_hat_temp <- c(diag(A_hat), vech(B_hat)[, 1])
+		theta_hat_temp <- c(diag(A_hat), vech(B_hat))
 		theta_EST[reps, ] <- theta_hat_temp
 	
 		RES_variance <- CALCULATE_VAR_A_B(A_hat, B_hat, p_vec, n)
 		VAR_A_MAT <- RES_variance$VAR_A_MAT
 		VAR_B_MAT <- RES_variance$VAR_B_MAT
-		theta_VAR_temp <- c(diag(VAR_A_MAT), vech(VAR_B_MAT)[, 1])
+		theta_VAR_temp <- c(diag(VAR_A_MAT), vech(VAR_B_MAT))
 		theta_ASE[reps, ] <- sqrt(theta_VAR_temp)
 	
 		CI_LOWER_temp <- theta_hat_temp - qnorm(1 - ALPHA / 2) * sqrt(theta_VAR_temp)
@@ -559,14 +560,17 @@ while(reps <= repsMax){
 		F_HAT_MIS_1 <- solve(t(L) %*% L) %*% t(L) %*% X_1 ### K by n
 		R_MIS_1 <- as.matrix(F_HAT_MIS_1 - F)
 		LOSS_MIS_1[reps] <- sum(apply(R_MIS_1, 2, norm, "2"))
+		RLOSS_MIS_1[reps] <- sum(apply(R_MIS_1, 2, norm, "2")) / sum(apply(F, 2, norm, "2"))
 		
 		F_HAT_MIS_3 <- solve(t(L) %*% L) %*% t(L) %*% X_3 ### K by n
 		R_MIS_3 <- as.matrix(F_HAT_MIS_3 - F)
 		LOSS_MIS_3[reps] <- sum(apply(R_MIS_3, 2, norm, "2"))
+		RLOSS_MIS_3[reps] <- sum(apply(R_MIS_3, 2, norm, "2")) / sum(apply(F, 2, norm, "2"))
 		
 		F_HAT_MIS_5 <- solve(t(L) %*% L) %*% t(L) %*% X_5 ### K by n
 		R_MIS_5 <- as.matrix(F_HAT_MIS_5 - F)
 		LOSS_MIS_5[reps] <- sum(apply(R_MIS_5, 2, norm, "2"))
+		RLOSS_MIS_5[reps] <- sum(apply(R_MIS_5, 2, norm, "2")) / sum(apply(F, 2, norm, "2"))
 		
 		S_1 <- cov(DATA_1)
 		S_3 <- cov(DATA_3)
@@ -578,35 +582,35 @@ while(reps <= repsMax){
 
 		A_hat_1 <- RES_theta_hat_1$A
 		B_hat_1 <- RES_theta_hat_1$B
-		theta_hat_temp_1 <- c(diag(A_hat_1), vech(B_hat_1)[, 1])
+		theta_hat_temp_1 <- c(diag(A_hat_1), vech(B_hat_1))
 		theta_EST_1[reps, ] <- theta_hat_temp_1
 		
 		A_hat_3 <- RES_theta_hat_3$A
 		B_hat_3 <- RES_theta_hat_3$B
-		theta_hat_temp_3 <- c(diag(A_hat_3), vech(B_hat_3)[, 1])
+		theta_hat_temp_3 <- c(diag(A_hat_3), vech(B_hat_3))
 		theta_EST_3[reps, ] <- theta_hat_temp_3
 		
 		A_hat_5 <- RES_theta_hat_5$A
 		B_hat_5 <- RES_theta_hat_5$B
-		theta_hat_temp_5 <- c(diag(A_hat_5), vech(B_hat_5)[, 1])
+		theta_hat_temp_5 <- c(diag(A_hat_5), vech(B_hat_5))
 		theta_EST_5[reps, ] <- theta_hat_temp_5
 	
 		RES_variance_1 <- CALCULATE_VAR_A_B(A_hat_1, B_hat_1, p_vec, n)
 		VAR_A_MAT_1 <- RES_variance_1$VAR_A_MAT
 		VAR_B_MAT_1 <- RES_variance_1$VAR_B_MAT
-		theta_VAR_temp_1 <- c(diag(VAR_A_MAT_1), vech(VAR_B_MAT_1)[, 1])
+		theta_VAR_temp_1 <- c(diag(VAR_A_MAT_1), vech(VAR_B_MAT_1))
 		theta_ASE_1[reps, ] <- sqrt(theta_VAR_temp_1)
 		
 		RES_variance_3 <- CALCULATE_VAR_A_B(A_hat_3, B_hat_3, p_vec, n)
 		VAR_A_MAT_3 <- RES_variance_3$VAR_A_MAT
 		VAR_B_MAT_3 <- RES_variance_3$VAR_B_MAT
-		theta_VAR_temp_3 <- c(diag(VAR_A_MAT_3), vech(VAR_B_MAT_3)[, 1])
+		theta_VAR_temp_3 <- c(diag(VAR_A_MAT_3), vech(VAR_B_MAT_3))
 		theta_ASE_3[reps, ] <- sqrt(theta_VAR_temp_3)
 		
 		RES_variance_5 <- CALCULATE_VAR_A_B(A_hat_5, B_hat_5, p_vec, n)
 		VAR_A_MAT_5 <- RES_variance_5$VAR_A_MAT
 		VAR_B_MAT_5 <- RES_variance_5$VAR_B_MAT
-		theta_VAR_temp_5 <- c(diag(VAR_A_MAT_5), vech(VAR_B_MAT_5)[, 1])
+		theta_VAR_temp_5 <- c(diag(VAR_A_MAT_5), vech(VAR_B_MAT_5))
 		theta_ASE_5[reps, ] <- sqrt(theta_VAR_temp_5)
 	
 		CI_LOWER_temp_1 <- theta_hat_temp_1 - qnorm(1 - ALPHA / 2) * sqrt(theta_VAR_temp_1)
@@ -818,5 +822,9 @@ if(SET_NO %in% c(1, 2, 4, 7)){
 
 	round(c(mean(LOSS_MIS_1), sd(LOSS_MIS_1), 
 		    mean(LOSS_MIS_3), sd(LOSS_MIS_3), 
-		   mean(LOSS_MIS_5), sd(LOSS_MIS_5)), 2)
+		    mean(LOSS_MIS_5), sd(LOSS_MIS_5)), 2)
+	
+	round(c(mean(RLOSS_MIS_1), sd(RLOSS_MIS_1), 
+		    mean(RLOSS_MIS_3), sd(RLOSS_MIS_3), 
+		    mean(RLOSS_MIS_5), sd(RLOSS_MIS_5)), 2)	
 }
