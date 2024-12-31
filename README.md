@@ -5,4 +5,4 @@
 1. SECTION SIMULATION STUDIES: R code and results for Section 3 Simulation Studies
 2. SECTION APPLICATION TO GENE EXPRESSION DATA: real datasets, R code, and results for Section 4 Application to Gene Expression Data
 3. SECTION SUPPLEMENTARY MATERIAL: R code and results for Supplementary Material Section D Additional Simulation Studies
-4. FIGURES: R code for creating figures in the main paper and supplementary Material
+4. FIGURES: R code for creating figures in the main paper and Supplementary Material
